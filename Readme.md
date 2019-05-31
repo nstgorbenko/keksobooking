@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Анастасия Горбенко](https://up.htmlacademy.ru/javascript/17/user/958277).
-* Наставник: `Неизвестно`.
+* Наставник: [Артём Рудов](https://htmlacademy.ru/profile/artrudov).
 
 ---
 

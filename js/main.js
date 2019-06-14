@@ -11,23 +11,29 @@ var getRandomNumber = function (min, max) {
   return Math.floor(min + Math.random() * (max + 1 - min));
 };
 
+var createAd = function (index) {
+  var newAd = {};
+
+  newAd.author = {'avatar': 'img/avatars/user0' + index + '.png'};
+  newAd.offer = {'type': typesList[Math.floor(Math.random() * typesList.length)]};
+  newAd.location = {};
+  newAd.location.x = getRandomNumber(MAP_LEFT, MAP_RIGHT);
+  newAd.location.y = getRandomNumber(MAP_TOP, MAP_BOTTOM);
+  return newAd;
+};
+
 var createAds = function () {
   var adsList = [];
 
   for (var i = 1; i <= PINS_NUMBER; i++) {
-    var newAd = {};
-    newAd.author = {'avatar': 'img/avatars/user0' + i + '.png'};
-    newAd.offer = {'type': typesList[Math.floor(Math.random() * typesList.length)]};
-    newAd.location = {};
-    newAd.location.x = getRandomNumber(MAP_LEFT, MAP_RIGHT);
-    newAd.location.y = getRandomNumber(MAP_TOP, MAP_BOTTOM);
-    adsList.push(newAd);
+    adsList.push(createAd(i));
   }
   return adsList;
 };
 
 var createPin = function (pinData) {
   var pin = pinTemplate.cloneNode(true);
+
   pin.style.left = pinData.location.x - PIN_WIDTH / 2 + 'px';
   pin.style.top = pinData.location.y - PIN_HEIGHT + 'px';
   pin.querySelector('img').src = pinData.author.avatar;
@@ -37,6 +43,7 @@ var createPin = function (pinData) {
 
 var createPinsList = function (ads) {
   var fragment = document.createDocumentFragment();
+
   ads.forEach(function (newPin) {
     fragment.appendChild(createPin(newPin));
   });

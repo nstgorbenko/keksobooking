@@ -9,7 +9,8 @@ var PINS_NUMBER = 8;
 var TYPES_LIST = ['palace', 'flat', 'house', 'bungalo'];
 var MAIN_PIN_WIDTH = 65;
 var MAIN_PIN_HEIGHT = 81;
-var MAIN_PIN_START_ADDRESS = 603 + ', ' + 456;
+var MAIN_PIN_START_X = 603;
+var MAIN_PIN_START_Y = 456;
 
 var getRandomNumber = function (min, max) {
   return Math.floor(min + Math.random() * (max + 1 - min));
@@ -73,12 +74,13 @@ var makeActive = function (elements) {
   });
 };
 
-var activePage = function () {
-  mapPins.appendChild(pinsList);
+var onMainPinClick = function () {
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
   makeActive(adFormFields);
   makeActive(mapFiltersFields);
+  mapPins.appendChild(pinsList);
+  mainPin.removeEventListener('click', onMainPinClick);
 };
 
 var mainPinAddress = function () {
@@ -97,15 +99,11 @@ var address = document.querySelector('[name = "address"]');
 
 makeDisabled(adFormFields);
 makeDisabled(mapFiltersFields);
-address.value = MAIN_PIN_START_ADDRESS;
-var nearbyAds = createAds();
-var pinsList = createPinsList(nearbyAds);
+address.value = MAIN_PIN_START_X + ', ' + MAIN_PIN_START_Y;
+var pinsList = createPinsList(createAds());
 
-mainPin.addEventListener('click', function () {
-  activePage();
-});
+mainPin.addEventListener('click', onMainPinClick);
 
 mainPin.addEventListener('mouseup', function () {
-  activePage();
   address.value = mainPinAddress();
 });

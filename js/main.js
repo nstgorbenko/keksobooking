@@ -11,12 +11,6 @@ var MAIN_PIN_WIDTH = 65;
 var MAIN_PIN_HEIGHT = 81;
 var MAIN_PIN_START_X = 603;
 var MAIN_PIN_START_Y = 456;
-var MIN_PRICE = {
-  bungalo: 0,
-  flat: 1000,
-  house: 5000,
-  palace: 10000
-};
 
 var getRandomNumber = function (min, max) {
   return Math.floor(min + Math.random() * (max + 1 - min));
@@ -103,10 +97,8 @@ var mainPinAddress = function () {
 };
 
 var onHouseTypeChange = function () {
-  var chosenTypePrice = MIN_PRICE[houseType.value];
-
-  price.min = chosenTypePrice;
-  price.placeholder = chosenTypePrice;
+  price.min = minPrice[houseType.value];
+  price.placeholder = minPrice[houseType.value];
 };
 
 var onInOutTimeChange = function (evt) {
@@ -130,6 +122,12 @@ var houseType = document.querySelector('#type');
 var price = document.querySelector('#price');
 var timeIn = document.querySelector('#timein');
 var timeOut = document.querySelector('#timeout');
+var minPrice = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
 
 address.value = MAIN_PIN_START_X + ', ' + MAIN_PIN_START_Y;
 makeDisabled(adFormFields);

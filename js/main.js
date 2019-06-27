@@ -77,14 +77,36 @@ var makeActive = function (elements) {
 var onMainPinClick = function () {
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
-  makeActive(adFormFields);
   makeActive(mapFiltersFields);
+  makeActive(adFormFields);
   mapPins.appendChild(pinsList);
+
   mainPin.removeEventListener('click', onMainPinClick);
+  mainPin.addEventListener('mouseup', onMainPinMouseUp);
+  houseType.addEventListener('change', onHouseTypeChange);
+  timeIn.addEventListener('change', onInOutTimeChange);
+  timeOut.addEventListener('change', onInOutTimeChange);
+};
+
+var onMainPinMouseUp = function () {
+  address.value = mainPinAddress();
 };
 
 var mainPinAddress = function () {
   return Math.round((mainPin.offsetLeft + MAIN_PIN_WIDTH / 2)) + ', ' + Math.round((mainPin.offsetTop + MAIN_PIN_HEIGHT));
+};
+
+var onHouseTypeChange = function () {
+  price.min = minPrice[houseType.value];
+  price.placeholder = minPrice[houseType.value];
+};
+
+var onInOutTimeChange = function (evt) {
+  if (evt.target === timeIn) {
+    timeOut.selectedIndex = timeIn.selectedIndex;
+  } else {
+    timeIn.selectedIndex = timeOut.selectedIndex;
+  }
 };
 
 var map = document.querySelector('.map');
@@ -96,14 +118,19 @@ var mapFilters = document.querySelector('.map__filters');
 var mapFiltersFields = mapFilters.querySelectorAll('input, select');
 var mainPin = document.querySelector('.map__pin--main');
 var address = document.querySelector('[name = "address"]');
+var houseType = document.querySelector('#type');
+var price = document.querySelector('#price');
+var timeIn = document.querySelector('#timein');
+var timeOut = document.querySelector('#timeout');
+var minPrice = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
 
+address.value = MAIN_PIN_START_X + ', ' + MAIN_PIN_START_Y;
 makeDisabled(adFormFields);
 makeDisabled(mapFiltersFields);
-address.value = MAIN_PIN_START_X + ', ' + MAIN_PIN_START_Y;
 var pinsList = createPinsList(createAds());
-
 mainPin.addEventListener('click', onMainPinClick);
-
-mainPin.addEventListener('mouseup', function () {
-  address.value = mainPinAddress();
-});

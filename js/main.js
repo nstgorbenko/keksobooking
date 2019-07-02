@@ -12,10 +12,21 @@ var MAIN_PIN_HEIGHT = 81;
 var MAIN_PIN_START_ADDRESS = '603, 408';
 var UNACTIVE_MAP_CHILDREN = 2;
 
+/**
+ * Возвращает случайное целое число между min (включительно) и max (включительно)
+   * @param {Number} min
+   * @param {Number} max
+   * @return {Number}
+ */
 var getRandomNumber = function (min, max) {
   return Math.floor(min + Math.random() * (max + 1 - min));
 };
 
+/**
+ * Генерирует объект, описывающий похожее объявление неподалеку
+   * @param {Number} index - число, указывающее на адрес изображения
+   * @return {Object}
+ */
 var createAd = function (index) {
   return {
     author: {
@@ -31,6 +42,10 @@ var createAd = function (index) {
   };
 };
 
+/**
+ * Возвращает массив объектов похожих объявлений
+ * @return {Array.<object>}
+ */
 var createAds = function () {
   var adsList = [];
 
@@ -41,6 +56,11 @@ var createAds = function () {
   return adsList;
 };
 
+/**
+ * Создает DOM-элемент на основе объекта с данными
+ * @param {Object} pinData - объект, описывающий похожее объявление неподалеку
+ * @return {Node}
+ */
 var createPin = function (pinData) {
   var pin = pinTemplate.cloneNode(true);
 
@@ -52,6 +72,11 @@ var createPin = function (pinData) {
   return pin;
 };
 
+/**
+ * Возвращает фрагмент c DOM-элементами
+ * @param {Array.<object>} ads - массив объектов похожих объявлений
+ * @return {NodeList}
+ */
 var createPinsList = function (ads) {
   var fragment = document.createDocumentFragment();
 
@@ -62,27 +87,46 @@ var createPinsList = function (ads) {
   return fragment;
 };
 
+/**
+ * Добавляет HTML-элементам атрибут disabled
+ * @param {NodeList} elements - набор HTML-элементов
+ */
 var makeDisabled = function (elements) {
   elements.forEach(function (newElement) {
     newElement.disabled = true;
   });
 };
 
+/**
+ * Удаляет у HTML-элементов атрибут disabled
+ * @param {NodeList} elements - набор HTML-элементов
+ */
 var makeActive = function (elements) {
   elements.forEach(function (newElement) {
     newElement.disabled = false;
   });
 };
 
+/**
+ * Возвращает адрес метки - координаты, на которые метка указывает своим острым концом
+ * @return {String}
+ */
 var mainPinAddress = function () {
   return Math.round((mainPin.offsetLeft + MAIN_PIN_WIDTH / 2)) + ', ' + Math.round((mainPin.offsetTop + MAIN_PIN_HEIGHT));
 };
 
+/**
+ * Устанавливает значение атрибутов min и placeholder для поля 'Цена за ночь, руб' в соответствии с выбранным типом жилья
+ */
 var onHouseTypeChange = function () {
   price.min = minPrice[houseType.value];
   price.placeholder = minPrice[houseType.value];
 };
 
+/**
+ * Синхронизирует значения полей 'Время заезда' и 'Время выезда'
+ * @param {Object} evt - объект события 'change'
+ */
 var onInOutTimeChange = function (evt) {
   if (evt.target === timeIn) {
     timeOut.selectedIndex = timeIn.selectedIndex;
@@ -91,6 +135,9 @@ var onInOutTimeChange = function (evt) {
   }
 };
 
+/**
+ * Переводит страницу в активное состояние после первого перемещения метки
+ */
 var onFirstMouseDown = function () {
   var onFirstMouseUp = function () {
     address.value = mainPinAddress();
@@ -110,12 +157,20 @@ var onFirstMouseDown = function () {
   document.addEventListener('mouseup', onFirstMouseUp);
 };
 
+/**
+ * Реализует возможность перетаскивания метки
+ * @param {Object} evt - объект события 'mousedown'
+ */
 var onMouseDown = function (evt) {
   var start = {
     x: evt.clientX,
     y: evt.clientY
   };
 
+  /**
+   * Удаляет ранее отрисованные на карте объявления, задает метке новые координаты
+   * @param {Object} moveEvt - объект события 'mousemove'
+   */
   var onMouseMove = function (moveEvt) {
     while (mapPins.children.length > UNACTIVE_MAP_CHILDREN) {
       mapPins.removeChild(mapPins.lastChild);
@@ -136,17 +191,11 @@ var onMouseDown = function (evt) {
       y: mainPin.offsetTop - shift.y
     };
 
-    if (mainPinCoords.x > MAP_RIGHT - MAIN_PIN_WIDTH) {
-      mainPinCoords.x = MAP_RIGHT - MAIN_PIN_WIDTH;
-    } else if (mainPinCoords.x < MAP_LEFT) {
-      mainPinCoords.x = MAP_LEFT;
-    }
+    mainPinCoords.x = mainPinCoords.x > MAP_RIGHT - MAIN_PIN_WIDTH ? MAP_RIGHT - MAIN_PIN_WIDTH : mainPinCoords.x;
+    mainPinCoords.x = mainPinCoords.x < MAP_LEFT ? MAP_LEFT : mainPinCoords.x;
 
-    if (mainPinCoords.y > MAP_BOTTOM - MAIN_PIN_HEIGHT) {
-      mainPinCoords.y = MAP_BOTTOM - MAIN_PIN_HEIGHT;
-    } else if (mainPinCoords.y < MAP_TOP - MAIN_PIN_HEIGHT) {
-      mainPinCoords.y = MAP_TOP - MAIN_PIN_HEIGHT;
-    }
+    mainPinCoords.y = mainPinCoords.y > MAP_BOTTOM - MAIN_PIN_HEIGHT ? MAP_BOTTOM - MAIN_PIN_HEIGHT : mainPinCoords.y;
+    mainPinCoords.y = mainPinCoords.y < MAP_TOP - MAIN_PIN_HEIGHT ? MAP_TOP - MAIN_PIN_HEIGHT : mainPinCoords.y;
 
     mainPin.style.top = mainPinCoords.y + 'px';
     mainPin.style.left = mainPinCoords.x + 'px';
@@ -154,6 +203,9 @@ var onMouseDown = function (evt) {
     address.value = mainPinAddress();
   };
 
+  /**
+   * Отрисовывает на карте вновь созданные объявления, удаляет обработчики событий 'mousemove' и 'mouseup'
+   */
   var onMouseUp = function () {
     if (mapPins.children.length === UNACTIVE_MAP_CHILDREN) {
       var pinsList = createPinsList(createAds());

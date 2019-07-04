@@ -10,7 +10,6 @@ var TYPES_LIST = ['palace', 'flat', 'house', 'bungalo'];
 var MAIN_PIN_WIDTH = 65;
 var MAIN_PIN_HEIGHT = 81;
 var MAIN_PIN_START_ADDRESS = '603, 408';
-var UNACTIVE_MAP_CHILDREN = 2;
 
 /**
  * Возвращает случайное целое число между min (включительно) и max (включительно)
@@ -136,24 +135,28 @@ var onInOutTimeChange = function (evt) {
 };
 
 /**
+ * Переводит страницу в активное состояние
+ */
+var onFirstMouseUp = function () {
+  address.value = mainPinAddress();
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  mapPins.appendChild(pinsList);
+  makeActive(mapFiltersFields);
+  makeActive(adFormFields);
+
+  houseType.addEventListener('change', onHouseTypeChange);
+  timeIn.addEventListener('change', onInOutTimeChange);
+  timeOut.addEventListener('change', onInOutTimeChange);
+
+  document.removeEventListener('mouseup', onFirstMouseUp);
+  mainPin.removeEventListener('mousedown', onFirstMouseDown);
+};
+
+/**
  * Переводит страницу в активное состояние после первого перемещения метки
  */
 var onFirstMouseDown = function () {
-  var onFirstMouseUp = function () {
-    address.value = mainPinAddress();
-    map.classList.remove('map--faded');
-    adForm.classList.remove('ad-form--disabled');
-    makeActive(mapFiltersFields);
-    makeActive(adFormFields);
-
-    houseType.addEventListener('change', onHouseTypeChange);
-    timeIn.addEventListener('change', onInOutTimeChange);
-    timeOut.addEventListener('change', onInOutTimeChange);
-
-    document.removeEventListener('mouseup', onFirstMouseUp);
-    mainPin.removeEventListener('mouseup', onFirstMouseDown);
-  };
-
   document.addEventListener('mouseup', onFirstMouseUp);
 };
 
@@ -168,14 +171,10 @@ var onMouseDown = function (evt) {
   };
 
   /**
-   * Удаляет ранее отрисованные на карте объявления, задает метке новые координаты
+   * Задает метке новые координаты
    * @param {Object} moveEvt - объект события 'mousemove'
    */
   var onMouseMove = function (moveEvt) {
-    while (mapPins.children.length > UNACTIVE_MAP_CHILDREN) {
-      mapPins.removeChild(mapPins.lastChild);
-    }
-
     var shift = {
       x: start.x - moveEvt.clientX,
       y: start.y - moveEvt.clientY
@@ -204,14 +203,9 @@ var onMouseDown = function (evt) {
   };
 
   /**
-   * Отрисовывает на карте вновь созданные объявления, удаляет обработчики событий 'mousemove' и 'mouseup'
+   * Удаляет обработчики событий 'mousemove' и 'mouseup'
    */
   var onMouseUp = function () {
-    if (mapPins.children.length === UNACTIVE_MAP_CHILDREN) {
-      var pinsList = createPinsList(createAds());
-      mapPins.appendChild(pinsList);
-    }
-
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
   };
@@ -245,3 +239,4 @@ makeDisabled(adFormFields);
 makeDisabled(mapFiltersFields);
 mainPin.addEventListener('mousedown', onFirstMouseDown);
 mainPin.addEventListener('mousedown', onMouseDown);
+var pinsList = createPinsList(createAds());

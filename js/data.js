@@ -1,57 +1,12 @@
 'use strict';
 (function () {
-  var TYPES_LIST = ['palace', 'flat', 'house', 'bungalo'];
   var MAP_LEFT = 0;
   var MAP_RIGHT = 1200;
   var MAP_TOP = 130;
   var MAP_BOTTOM = 630;
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
-  var PINS_NUMBER = 8;
-
-  /**
-   * Возвращает случайное целое число между min (включительно) и max (включительно)
-     * @param {Number} min
-     * @param {Number} max
-     * @return {Number}
-   */
-  var getRandomNumber = function (min, max) {
-    return Math.floor(min + Math.random() * (max + 1 - min));
-  };
-
-  /**
-   * Генерирует объект, описывающий похожее объявление неподалеку
-     * @param {Number} index - число, указывающее на адрес изображения
-     * @return {Object}
-   */
-  var createAd = function (index) {
-    return {
-      author: {
-        avatar: 'img/avatars/user0' + index + '.png'
-      },
-      offer: {
-        type: TYPES_LIST[Math.floor(Math.random() * TYPES_LIST.length)]
-      },
-      location: {
-        x: getRandomNumber(MAP_LEFT + PIN_WIDTH / 2, MAP_RIGHT - PIN_WIDTH / 2),
-        y: getRandomNumber(MAP_TOP, MAP_BOTTOM)
-      }
-    };
-  };
-
-  /**
-   * Возвращает массив объектов похожих объявлений
-   * @return {Array.<object>}
-   */
-  var createAds = function () {
-    var adsList = [];
-
-    for (var i = 1; i <= PINS_NUMBER; i++) {
-      adsList.push(createAd(i));
-    }
-
-    return adsList;
-  };
+  var ESC_KEYCODE = 27;
 
   /**
    * Создает DOM-элемент на основе объекта с данными
@@ -84,15 +39,84 @@
     return fragment;
   };
 
-  var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  /**
+   * Отрисовывает похожие объявления на карте
+   * @param {Array.<object>} ads - массив объектов с объявлениями
+   */
+  var renderAds = function (ads) {
+    mapPins.appendChild(createPinsList(ads));
+  };
 
-  var pinsList = createPinsList(createAds());
+  /**
+   * Коллбэк-функция, записывает серверные данные
+   * @param {Array.<object>} data - массив объектов с объявлениями
+   */
+  var onSuccessLoad = function (data) {
+    data.forEach(function (ad) {
+      ads.push(ad);
+    });
+  };
+
+  /**
+   * Закрывает окно с сообщением об ошибке по клику
+   */
+  var onRandomClick = function () {
+    main.removeChild(errorTemplate);
+    removeErrorPopupListeners();
+  };
+
+  /**
+   * Закрывает окно с сообщением об ошибке по нажатию на ESC
+   * @param {Object} evt - объект события 'keydown'
+   */
+  var onEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      main.removeChild(errorTemplate);
+      removeErrorPopupListeners();
+    }
+  };
+
+  /**
+   * Добавляет обработчики закрытия окна с сообщением об ошибке
+   */
+  var addErrorPopupListeners = function () {
+    document.addEventListener('keydown', onEscPress);
+    document.addEventListener('click', onRandomClick);
+  };
+
+  /**
+   * Удаляет обработчики закрытия окна с сообщением об ошибке
+   */
+  var removeErrorPopupListeners = function () {
+    document.removeEventListener('keydown', onEscPress);
+    document.removeEventListener('click', onRandomClick);
+  };
+
+  /**
+   * Коллбэк-функция, выводит сообщение об ошибке
+   * @param {String} error - сообщение об ошибке
+   */
+  var onErrorLoad = function (error) {
+    errorMessage.innerHTML = error;
+    main.appendChild(errorTemplate);
+    addErrorPopupListeners();
+  };
+
+  var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var errorMessage = errorTemplate.querySelector('.error__message');
+  var main = document.querySelector('main');
+  var mapPins = document.querySelector('.map__pins');
+  var ads = [];
 
   window.data = {
-    pinsList: pinsList,
+    onSuccessLoad: onSuccessLoad,
+    onErrorLoad: onErrorLoad,
     MAP_LEFT: MAP_LEFT,
     MAP_RIGHT: MAP_RIGHT,
     MAP_TOP: MAP_TOP,
-    MAP_BOTTOM: MAP_BOTTOM
+    MAP_BOTTOM: MAP_BOTTOM,
+    renderAds: renderAds,
+    ads: ads
   };
 })();

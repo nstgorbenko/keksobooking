@@ -40,11 +40,21 @@
   };
 
   /**
-   * Коллбэк-функция, отрисовывает похожие объявления на карте
+   * Отрисовывает похожие объявления на карте
+   * @param {Array.<object>} ads - массив объектов с объявлениями
+   */
+  var renderAds = function (ads) {
+    mapPins.appendChild(createPinsList(ads));
+  };
+
+  /**
+   * Коллбэк-функция, записывает серверные данные
    * @param {Array.<object>} data - массив объектов с объявлениями
    */
   var onSuccessLoad = function (data) {
-    mapPins.appendChild(createPinsList(data));
+    data.forEach(function (ad) {
+      ads.push(ad);
+    });
   };
 
   /**
@@ -97,6 +107,7 @@
   var errorMessage = errorTemplate.querySelector('.error__message');
   var main = document.querySelector('main');
   var mapPins = document.querySelector('.map__pins');
+  var ads = [];
 
   window.data = {
     onSuccessLoad: onSuccessLoad,
@@ -104,6 +115,8 @@
     MAP_LEFT: MAP_LEFT,
     MAP_RIGHT: MAP_RIGHT,
     MAP_TOP: MAP_TOP,
-    MAP_BOTTOM: MAP_BOTTOM
+    MAP_BOTTOM: MAP_BOTTOM,
+    renderAds: renderAds,
+    ads: ads
   };
 })();

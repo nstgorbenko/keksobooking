@@ -1,6 +1,13 @@
 'use strict';
 (function () {
   var URL = 'https://js.dump.academy/keksobooking/data';
+  var LOAD_TIME = 10000;
+  var Code = {
+    SUCCESS: 200,
+    BAD_REQUEST: 400,
+    NOT_FOUND: 404,
+    SERVER_ERROR: 500
+  };
 
   /**
    * Загружает данные с сервера
@@ -10,21 +17,21 @@
   var load = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    xhr.timeout = 10000;
+    xhr.timeout = LOAD_TIME;
 
     xhr.addEventListener('load', function () {
       var error;
       switch (xhr.status) {
-        case 200:
+        case Code.SUCCESS:
           onSuccess(xhr.response);
           break;
-        case 400:
+        case Code.BAD_REQUEST:
           error = 'Неверный запрос';
           break;
-        case 404:
+        case Code.NOT_FOUND:
           error = 'Ничего не найдено';
           break;
-        case 500:
+        case Code.SERVER_ERROR:
           error = 'Внутренняя ошибка сервера';
           break;
         default:

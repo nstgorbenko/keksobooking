@@ -18,7 +18,7 @@
     window.form.address.value = mainPinAddress();
     map.classList.remove('map--faded');
     window.form.adForm.classList.remove('ad-form--disabled');
-    window.backend.load(window.data.onSuccessLoad, window.data.onErrorLoad);
+    window.data.renderAds(window.data.ads);
     window.form.makeActive(window.form.mapFiltersFields);
     window.form.makeActive(window.form.adFormFields);
 
@@ -94,6 +94,7 @@
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
 
+  window.backend.load(window.data.onSuccessLoad, window.data.onErrorLoad);
   mainPin.addEventListener('mousedown', onFirstMouseDown);
   mainPin.addEventListener('mousedown', onMouseDown);
 })();

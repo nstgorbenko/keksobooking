@@ -2,6 +2,12 @@
 (function () {
   var MAIN_PIN_WIDTH = 65;
   var MAIN_PIN_HEIGHT = 81;
+  var MapCoord = {
+    LEFT: 0,
+    RIGHT: 1200,
+    TOP: 130,
+    BOTTOM: 630
+  };
 
   /**
    * Возвращает адрес метки - координаты, на которые метка указывает своим острым концом
@@ -22,6 +28,7 @@
     window.form.makeActive(window.form.mapFiltersFields);
     window.form.makeActive(window.form.adFormFields);
 
+    window.filter.housingType.addEventListener('change', window.filter.onHousingTypeChange);
     window.form.houseType.addEventListener('change', window.form.onHouseTypeChange);
     window.form.timeIn.addEventListener('change', window.form.onInOutTimeChange);
     window.form.timeOut.addEventListener('change', window.form.onInOutTimeChange);
@@ -67,11 +74,11 @@
         y: mainPin.offsetTop - shift.y
       };
 
-      mainPinCoords.x = mainPinCoords.x > window.data.MAP_RIGHT - MAIN_PIN_WIDTH ? window.data.MAP_RIGHT - MAIN_PIN_WIDTH : mainPinCoords.x;
-      mainPinCoords.x = mainPinCoords.x < window.data.MAP_LEFT ? window.data.MAP_LEFT : mainPinCoords.x;
+      mainPinCoords.x = mainPinCoords.x > MapCoord.RIGHT - MAIN_PIN_WIDTH ? MapCoord.RIGHT - MAIN_PIN_WIDTH : mainPinCoords.x;
+      mainPinCoords.x = mainPinCoords.x < MapCoord.LEFT ? MapCoord.LEFT : mainPinCoords.x;
 
-      mainPinCoords.y = mainPinCoords.y > window.data.MAP_BOTTOM - MAIN_PIN_HEIGHT ? window.data.MAP_BOTTOM - MAIN_PIN_HEIGHT : mainPinCoords.y;
-      mainPinCoords.y = mainPinCoords.y < window.data.MAP_TOP - MAIN_PIN_HEIGHT ? window.data.MAP_TOP - MAIN_PIN_HEIGHT : mainPinCoords.y;
+      mainPinCoords.y = mainPinCoords.y > MapCoord.BOTTOM - MAIN_PIN_HEIGHT ? MapCoord.BOTTOM - MAIN_PIN_HEIGHT : mainPinCoords.y;
+      mainPinCoords.y = mainPinCoords.y < MapCoord.TOP - MAIN_PIN_HEIGHT ? MapCoord.TOP - MAIN_PIN_HEIGHT : mainPinCoords.y;
 
       mainPin.style.top = mainPinCoords.y + 'px';
       mainPin.style.left = mainPinCoords.x + 'px';

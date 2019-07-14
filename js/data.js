@@ -1,12 +1,9 @@
 'use strict';
 (function () {
-  var MAP_LEFT = 0;
-  var MAP_RIGHT = 1200;
-  var MAP_TOP = 130;
-  var MAP_BOTTOM = 630;
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
   var ESC_KEYCODE = 27;
+  var UNACTIVE_MAP_CHILDREN = 2;
 
   /**
    * Создает DOM-элемент на основе объекта с данными
@@ -25,7 +22,7 @@
   };
 
   /**
-   * Возвращает фрагмент c DOM-элементами
+   * Возвращает фрагмент c 5 DOM-элементами
    * @param {Array.<object>} ads - массив объектов похожих объявлений
    * @return {NodeList}
    */
@@ -44,17 +41,18 @@
    * @param {Array.<object>} ads - массив объектов с объявлениями
    */
   var renderAds = function (ads) {
-    mapPins.appendChild(createPinsList(ads));
+    while (mapPins.children.length > UNACTIVE_MAP_CHILDREN) {
+      mapPins.removeChild(mapPins.lastChild);
+    }
+    mapPins.appendChild(createPinsList(ads.slice(0, 5)));
   };
 
   /**
-   * Коллбэк-функция, записывает серверные данные
+   * Коллбэк-функция, сохраняет серверные данные
    * @param {Array.<object>} data - массив объектов с объявлениями
    */
   var onSuccessLoad = function (data) {
-    data.forEach(function (ad) {
-      ads.push(ad);
-    });
+    window.data.ads = data.slice();
   };
 
   /**
@@ -107,16 +105,10 @@
   var errorMessage = errorTemplate.querySelector('.error__message');
   var main = document.querySelector('main');
   var mapPins = document.querySelector('.map__pins');
-  var ads = [];
 
   window.data = {
     onSuccessLoad: onSuccessLoad,
     onErrorLoad: onErrorLoad,
-    MAP_LEFT: MAP_LEFT,
-    MAP_RIGHT: MAP_RIGHT,
-    MAP_TOP: MAP_TOP,
-    MAP_BOTTOM: MAP_BOTTOM,
-    renderAds: renderAds,
-    ads: ads
+    renderAds: renderAds
   };
 })();

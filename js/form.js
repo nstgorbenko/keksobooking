@@ -1,6 +1,12 @@
 'use strict';
 (function () {
   var MAIN_PIN_START_ADDRESS = '603, 408';
+  var minPriceMap = {
+    'bungalo': 0,
+    'flat': 1000,
+    'house': 5000,
+    'palace': 10000
+  };
 
   /**
    * Добавляет HTML-элементам атрибут disabled
@@ -26,8 +32,8 @@
    * Устанавливает значение атрибутов min и placeholder для поля 'Цена за ночь, руб' в соответствии с выбранным типом жилья
    */
   var onHouseTypeChange = function () {
-    price.min = minPrice[houseType.value];
-    price.placeholder = minPrice[houseType.value];
+    price.min = minPriceMap[houseType.value];
+    price.placeholder = minPriceMap[houseType.value];
   };
 
   /**
@@ -51,12 +57,6 @@
   var price = document.querySelector('#price');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
-  var minPrice = {
-    bungalo: 0,
-    flat: 1000,
-    house: 5000,
-    palace: 10000
-  };
 
   address.value = MAIN_PIN_START_ADDRESS;
   makeDisabled(adFormFields);

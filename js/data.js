@@ -3,7 +3,8 @@
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
   var ESC_KEYCODE = 27;
-  var UNACTIVE_MAP_CHILDREN = 2;
+  var FIRST_AD_NUMBER = 0;
+  var LAST_AD_NUMBER = 5;
 
   /**
    * Создает DOM-элемент на основе объекта с данными
@@ -41,10 +42,10 @@
    * @param {Array.<object>} ads - массив объектов с объявлениями
    */
   var renderAds = function (ads) {
-    while (mapPins.children.length > UNACTIVE_MAP_CHILDREN) {
-      mapPins.removeChild(mapPins.lastChild);
-    }
-    mapPins.appendChild(createPinsList(ads.slice(0, 5)));
+    mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (ad) {
+      mapPins.removeChild(ad);
+    });
+    mapPins.appendChild(createPinsList(ads.slice(FIRST_AD_NUMBER, LAST_AD_NUMBER)));
   };
 
   /**

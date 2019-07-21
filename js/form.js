@@ -66,6 +66,7 @@
     address: address,
     adForm: adForm,
     adFormFields: adFormFields,
+    mapFilters: mapFilters,
     mapFiltersFields: mapFiltersFields,
     houseType: houseType,
     timeIn: timeIn,

@@ -28,7 +28,7 @@
     window.form.makeActive(window.form.mapFiltersFields);
     window.form.makeActive(window.form.adFormFields);
 
-    window.filter.housingType.addEventListener('change', window.filter.onHousingTypeChange);
+    window.form.mapFilters.addEventListener('change', window.filter.onMapFiltersChange);
     window.form.houseType.addEventListener('change', window.form.onHouseTypeChange);
     window.form.timeIn.addEventListener('change', window.form.onInOutTimeChange);
     window.form.timeOut.addEventListener('change', window.form.onInOutTimeChange);

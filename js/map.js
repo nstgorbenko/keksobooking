@@ -32,6 +32,9 @@
     window.form.houseType.addEventListener('change', window.form.onHouseTypeChange);
     window.form.timeIn.addEventListener('change', window.form.onInOutTimeChange);
     window.form.timeOut.addEventListener('change', window.form.onInOutTimeChange);
+    window.form.onRoomsGuestsChange();
+    window.form.capacity.addEventListener('change', window.form.onRoomsGuestsChange);
+    window.form.roomNumber.addEventListener('change', window.form.onRoomsGuestsChange);
 
     document.removeEventListener('mouseup', onFirstMouseUp);
     mainPin.removeEventListener('mousedown', onFirstMouseDown);

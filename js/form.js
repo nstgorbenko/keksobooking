@@ -1,11 +1,18 @@
 'use strict';
 (function () {
   var MAIN_PIN_START_ADDRESS = '603, 408';
+  var NO_GUESTS_HOUSE = '100';
   var minPriceMap = {
     'bungalo': 0,
     'flat': 1000,
     'house': 5000,
     'palace': 10000
+  };
+  var RoomGuestsMap = {
+    1: [1],
+    2: [1, 2],
+    3: [1, 2, 3],
+    100: [0]
   };
 
   /**
@@ -48,6 +55,23 @@
     }
   };
 
+  /**
+   * Проверяет соотвествие полей 'Количество комнат' и 'Количество мест'
+   */
+  var onRoomsGuestsChange = function () {
+    var isCapacityEnough = RoomGuestsMap[roomNumber.value].some(function (elem) {
+      return elem === Number(capacity.value);
+    });
+    var message = '';
+
+    if (isCapacityEnough === false && roomNumber.value === NO_GUESTS_HOUSE) {
+      message = 'Допустимое значение - не для гостей';
+    } else if (isCapacityEnough === false) {
+      message = 'Допустимое количество гостей - не более ' + Math.max.apply(Math, RoomGuestsMap[roomNumber.value]) + ', но больше 0';
+    }
+    capacity.setCustomValidity(message);
+  };
+
   var address = document.querySelector('[name = "address"]');
   var adForm = document.querySelector('.ad-form');
   var adFormFields = adForm.querySelectorAll('input, select');
@@ -57,6 +81,8 @@
   var price = document.querySelector('#price');
   var timeIn = document.querySelector('#timein');
   var timeOut = document.querySelector('#timeout');
+  var roomNumber = document.querySelector('#room_number');
+  var capacity = document.querySelector('#capacity');
 
   address.value = MAIN_PIN_START_ADDRESS;
   makeDisabled(adFormFields);
@@ -71,9 +97,12 @@
     houseType: houseType,
     timeIn: timeIn,
     timeOut: timeOut,
+    roomNumber: roomNumber,
+    capacity: capacity,
 
     makeActive: makeActive,
     onHouseTypeChange: onHouseTypeChange,
-    onInOutTimeChange: onInOutTimeChange
+    onInOutTimeChange: onInOutTimeChange,
+    onRoomsGuestsChange: onRoomsGuestsChange
   };
 })();

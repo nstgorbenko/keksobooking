@@ -1,12 +1,10 @@
 'use strict';
 (function () {
-  var MAP_LEFT = 0;
-  var MAP_RIGHT = 1200;
-  var MAP_TOP = 130;
-  var MAP_BOTTOM = 630;
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
   var ESC_KEYCODE = 27;
+  var FIRST_AD_NUMBER = 0;
+  var LAST_AD_NUMBER = 5;
 
   /**
    * Создает DOM-элемент на основе объекта с данными
@@ -25,7 +23,7 @@
   };
 
   /**
-   * Возвращает фрагмент c DOM-элементами
+   * Возвращает фрагмент c 5 DOM-элементами
    * @param {Array.<object>} ads - массив объектов похожих объявлений
    * @return {NodeList}
    */
@@ -44,17 +42,18 @@
    * @param {Array.<object>} ads - массив объектов с объявлениями
    */
   var renderAds = function (ads) {
-    mapPins.appendChild(createPinsList(ads));
+    mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (ad) {
+      mapPins.removeChild(ad);
+    });
+    mapPins.appendChild(createPinsList(ads.slice(FIRST_AD_NUMBER, LAST_AD_NUMBER)));
   };
 
   /**
-   * Коллбэк-функция, записывает серверные данные
+   * Коллбэк-функция, сохраняет серверные данные
    * @param {Array.<object>} data - массив объектов с объявлениями
    */
   var onSuccessLoad = function (data) {
-    data.forEach(function (ad) {
-      ads.push(ad);
-    });
+    window.data.ads = data.slice();
   };
 
   /**
@@ -107,16 +106,10 @@
   var errorMessage = errorTemplate.querySelector('.error__message');
   var main = document.querySelector('main');
   var mapPins = document.querySelector('.map__pins');
-  var ads = [];
 
   window.data = {
     onSuccessLoad: onSuccessLoad,
     onErrorLoad: onErrorLoad,
-    MAP_LEFT: MAP_LEFT,
-    MAP_RIGHT: MAP_RIGHT,
-    MAP_TOP: MAP_TOP,
-    MAP_BOTTOM: MAP_BOTTOM,
-    renderAds: renderAds,
-    ads: ads
+    renderAds: renderAds
   };
 })();

@@ -1,7 +1,7 @@
 'use strict';
 (function () {
   var DEBOUNCE_INTERVAL = 500;
-  var housingPriceFilter = {
+  var HousePriceMap = {
     low: {
       min: 0,
       max: 10000
@@ -30,7 +30,7 @@
    * @return {*} - выражение, используемое для последующей фильтрации объявлений
    */
   var housingPriceChange = function (ad) {
-    return housingPrice.value === 'any' ? true : ad.offer.price >= housingPriceFilter[housingPrice.value].min && ad.offer.price < housingPriceFilter[housingPrice.value].max;
+    return housingPrice.value === 'any' ? true : ad.offer.price >= HousePriceMap[housingPrice.value].min && ad.offer.price < HousePriceMap[housingPrice.value].max;
   };
 
   /**
@@ -103,6 +103,7 @@
   };
 
   var onMapFiltersChange = function () {
+    window.data.closePopup();
     debounce();
   };
 

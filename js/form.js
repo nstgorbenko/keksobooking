@@ -89,6 +89,7 @@
   makeDisabled(mapFiltersFields);
 
   window.form = {
+    MAIN_PIN_START_ADDRESS: MAIN_PIN_START_ADDRESS,
     address: address,
     adForm: adForm,
     adFormFields: adFormFields,

@@ -1,6 +1,9 @@
 'use strict';
 (function () {
-  var URL = 'https://js.dump.academy/keksobooking/data';
+  var GET_URL = 'https://js.dump.academy/keksobooking/data';
+  var POST_URL = 'https://js.dump.academy/keksobooking/';
+  var GET = 'GET';
+  var POST = 'POST';
   var LOAD_TIME = 10000;
   var Code = {
     SUCCESS: 200,
@@ -10,11 +13,14 @@
   };
 
   /**
-   * Загружает данные с сервера
+   * Создает объект XMLHttpRequest для связи с сервером
    * @param {RequestCallback} onSuccess - коллбэк-функция для успешного выполнения запроса
    * @param {RequestCallback} onError - коллбэк-функция для неуспешного выполнения запроса
+   * @param {String} method - HTTP-метод
+   * @param {String} url - адрес сервера
+   * @param {*} data - данные для передачи на сервер
    */
-  var load = function (onSuccess, onError) {
+  var createXhr = function (onSuccess, onError, method, url, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.timeout = LOAD_TIME;
@@ -50,11 +56,31 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.open('GET', URL);
-    xhr.send();
+    xhr.open(method, url);
+    xhr.send(data);
+  };
+
+  /**
+   * Загружает данные с сервера
+   * @param {RequestCallback} onLoad - коллбэк-функция для успешного выполнения запроса
+   * @param {RequestCallback} onError - коллбэк-функция для неуспешного выполнения запроса
+   */
+  var download = function (onLoad, onError) {
+    createXhr(onLoad, onError, GET, GET_URL);
+  };
+
+  /**
+   * Отправляет данные на сервер
+   * @param {*} data - данные для передачи на сервер
+   * @param {RequestCallback} onLoad - коллбэк-функция для успешного выполнения запроса
+   * @param {RequestCallback} onError - коллбэк-функция для неуспешного выполнения запроса
+   */
+  var send = function (data, onLoad, onError) {
+    createXhr(onLoad, onError, POST, POST_URL, data);
   };
 
   window.backend = {
-    load: load
+    download: download,
+    send: send
   };
 })();

@@ -22,11 +22,12 @@
    */
   var onFirstMouseUp = function () {
     window.form.address.value = mainPinAddress();
-    map.classList.remove('map--faded');
+    window.data.map.classList.remove('map--faded');
     window.form.adForm.classList.remove('ad-form--disabled');
     window.data.renderAds(window.data.ads);
     window.form.makeActive(window.form.mapFiltersFields);
     window.form.makeActive(window.form.adFormFields);
+    window.data.submitButton.disabled = false;
 
     window.form.mapFilters.addEventListener('change', window.filter.onMapFiltersChange);
     window.form.houseType.addEventListener('change', window.form.onHouseTypeChange);
@@ -35,6 +36,7 @@
     window.form.onRoomsGuestsChange();
     window.form.capacity.addEventListener('change', window.form.onRoomsGuestsChange);
     window.form.roomNumber.addEventListener('change', window.form.onRoomsGuestsChange);
+    window.form.adForm.addEventListener('submit', window.data.onFormSubmit);
 
     document.removeEventListener('mouseup', onFirstMouseUp);
     mainPin.removeEventListener('mousedown', onFirstMouseDown);
@@ -101,10 +103,13 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
 
-  window.backend.load(window.data.onSuccessLoad, window.data.onErrorLoad);
-  mainPin.addEventListener('mousedown', onFirstMouseDown);
-  mainPin.addEventListener('mousedown', onMouseDown);
+  window.backend.download(window.data.onSuccessLoad, window.data.onErrorLoad);
+
+  window.map = {
+    mainPin: mainPin,
+    onFirstMouseDown: onFirstMouseDown,
+    onMouseDown: onMouseDown
+  };
 })();

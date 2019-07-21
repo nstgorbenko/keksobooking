@@ -36,7 +36,7 @@
     pin.querySelector('img').alt = '';
 
     pin.addEventListener('click', function () {
-      map.insertBefore(createCard(pinData), mapFilters);
+      map.insertBefore(createCard(pinData), mapFiltersContainer);
       document.addEventListener('keydown', onPopupEscPress);
     });
 
@@ -85,9 +85,11 @@
    */
   var closePopup = function () {
     var popup = map.querySelector('.popup');
-    map.removeChild(popup);
-    card.querySelector('.popup__close').removeEventListener('click', onClosePopupClick);
-    document.removeEventListener('keydown', onPopupEscPress);
+    if (popup) {
+      map.removeChild(popup);
+      card.querySelector('.popup__close').removeEventListener('click', onClosePopupClick);
+      document.removeEventListener('keydown', onPopupEscPress);
+    }
   };
 
   /**
@@ -160,13 +162,46 @@
    */
   var onSuccessLoad = function (data) {
     window.data.ads = data.slice();
+    window.map.mainPin.addEventListener('mousedown', window.map.onFirstMouseDown);
+    window.map.mainPin.addEventListener('mousedown', window.map.onMouseDown);
+  };
+
+  /**
+   * Коллбэк-функция, показывает сообщение об успешной отправке данных, переводит страницу в неактивное состояние
+   */
+  var onSuccessSubmit = function () {
+    successTemplate.classList.add('screen-popup');
+    main.appendChild(successTemplate);
+    addErrorPopupListeners();
+    window.form.adForm.reset();
+    window.form.adForm.classList.add('ad-form--disabled');
+    map.classList.add('map--faded');
+    window.form.address.value = '603, 408';
+    closePopup();
+    mapPins.querySelectorAll('.map__pin:not(.map__pin--main)').forEach(function (ad) {
+      mapPins.removeChild(ad);
+    });
+    window.map.mainPin.style = 'left: 570px; top: 375px';
+    window.map.mainPin.addEventListener('mousedown', window.map.onFirstMouseDown);
+  };
+
+  /**
+   * Отправляет данные на сервер
+   * @param {Object} evt - объект события 'submit'
+   */
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+    window.backend.send(new FormData(window.form.adForm), onSuccessSubmit, onErrorLoad);
+    submitButton.disabled = true;
   };
 
   /**
    * Закрывает окно с сообщением об ошибке по клику
    */
   var onRandomClick = function () {
-    main.removeChild(errorTemplate);
+    var screenPopup = main.querySelector('.screen-popup');
+
+    main.removeChild(screenPopup);
     removeErrorPopupListeners();
   };
 
@@ -175,8 +210,10 @@
    * @param {Object} evt - объект события 'keydown'
    */
   var onEscPress = function (evt) {
+    var screenPopup = main.querySelector('.screen-popup');
+
     if (evt.keyCode === ESC_KEYCODE) {
-      main.removeChild(errorTemplate);
+      main.removeChild(screenPopup);
       removeErrorPopupListeners();
     }
   };
@@ -203,28 +240,34 @@
    */
   var onErrorLoad = function (error) {
     errorMessage.innerHTML = error;
+    errorTemplate.classList.add('screen-popup');
     main.appendChild(errorTemplate);
     addErrorPopupListeners();
   };
 
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var errorMessage = errorTemplate.querySelector('.error__message');
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var card = cardTemplate.cloneNode(true);
-  var errorMessage = errorTemplate.querySelector('.error__message');
   var main = document.querySelector('main');
   var mapPins = document.querySelector('.map__pins');
   var photoAlbum = card.querySelector('.popup__photos');
   var picture = photoAlbum.querySelector('.popup__photo');
   var map = document.querySelector('.map');
-  var mapFilters = map.querySelector('.map__filters-container');
+  var mapFiltersContainer = map.querySelector('.map__filters-container');
+  var submitButton = document.querySelector('.ad-form__submit');
 
   window.data = {
     map: map,
+    submitButton: submitButton,
 
     onSuccessLoad: onSuccessLoad,
     onErrorLoad: onErrorLoad,
+    onFormSubmit: onFormSubmit,
     renderAds: renderAds,
-    createCard: createCard
+    createCard: createCard,
+    closePopup: closePopup
   };
 })();

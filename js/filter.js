@@ -20,7 +20,7 @@
    * @param {Object} ad - объявление
    * @return {*} - выражение, используемое для последующей фильтрации объявлений
    */
-  var housingTypeChange = function (ad) {
+  var getHousingType = function (ad) {
     return housingType.value === 'any' ? true : ad.offer.type === housingType.value;
   };
 
@@ -29,7 +29,7 @@
    * @param {Object} ad - объявление
    * @return {*} - выражение, используемое для последующей фильтрации объявлений
    */
-  var housingPriceChange = function (ad) {
+  var getHousingPrice = function (ad) {
     return housingPrice.value === 'any' ? true : ad.offer.price >= HousePriceMap[housingPrice.value].min && ad.offer.price < HousePriceMap[housingPrice.value].max;
   };
 
@@ -38,7 +38,7 @@
    * @param {Object} ad - объявление
    * @return {*} - выражение, используемое для последующей фильтрации объявлений
    */
-  var housingRoomsChange = function (ad) {
+  var getHousingRooms = function (ad) {
     return housingRooms.value === 'any' ? true : ad.offer.rooms === Number(housingRooms.value);
   };
 
@@ -47,7 +47,7 @@
    * @param {Object} ad - объявление
    * @return {*} - выражение, используемое для последующей фильтрации объявлений
    */
-  var housingGuestsChange = function (ad) {
+  var getHousingGuests = function (ad) {
     return housingGuests.value === 'any' ? true : ad.offer.rooms === Number(housingGuests.value);
   };
 
@@ -57,7 +57,7 @@
    * @param {HTMLElement} feature - чекбокс, обозначающий наличие удобства
    * @return {*} - выражение, используемое для последующей фильтрации объявлений
    */
-  var housingFeatureChange = function (ad, feature) {
+  var getHousingFeature = function (ad, feature) {
     return !feature.checked ? true : ad.offer.features.some(function (adFeature) {
       return adFeature === feature.value;
     });
@@ -69,25 +69,25 @@
    * @return {*} - выражение, используемое для последующей фильтрации объявлений
    */
   var checkAllFilters = function (ad) {
-    return housingTypeChange(ad) &&
-           housingPriceChange(ad) &&
-           housingRoomsChange(ad) &&
-           housingGuestsChange(ad) &&
-           housingFeatureChange(ad, wifiFilter) &&
-           housingFeatureChange(ad, dishwasherFilter) &&
-           housingFeatureChange(ad, parkingFilter) &&
-           housingFeatureChange(ad, washerFilter) &&
-           housingFeatureChange(ad, elevatorFilter) &&
-           housingFeatureChange(ad, conditionerFilter);
+    return getHousingType(ad) &&
+           getHousingPrice(ad) &&
+           getHousingRooms(ad) &&
+           getHousingGuests(ad) &&
+           getHousingFeature(ad, wifiFilter) &&
+           getHousingFeature(ad, dishwasherFilter) &&
+           getHousingFeature(ad, parkingFilter) &&
+           getHousingFeature(ad, washerFilter) &&
+           getHousingFeature(ad, elevatorFilter) &&
+           getHousingFeature(ad, conditionerFilter);
   };
 
   /**
    * Отрисовывает объявления в соответствии с выбранными фильтрами
    */
   var updateAds = function () {
-    var filteredAds = window.data.ads;
+    var filteredAds = window.feedback.ads;
     filteredAds = filteredAds.filter(checkAllFilters);
-    window.data.renderAds(filteredAds);
+    window.pin.renderAds(filteredAds);
   };
 
   /**
@@ -103,7 +103,7 @@
   };
 
   var onMapFiltersChange = function () {
-    window.data.closePopup();
+    window.adCard.close();
     debounce();
   };
 
@@ -120,6 +120,6 @@
   var timeOut;
 
   window.filter = {
-    onMapFiltersChange: onMapFiltersChange
+    onChange: onMapFiltersChange
   };
 })();

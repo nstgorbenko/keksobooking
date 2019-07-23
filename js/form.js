@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-  var MAIN_PIN_START_ADDRESS = '603, 408';
   var NO_GUESTS_HOUSE = '100';
   var minPriceMap = {
     'bungalo': 0,
@@ -74,7 +73,7 @@
 
   var address = document.querySelector('[name = "address"]');
   var adForm = document.querySelector('.ad-form');
-  var adFormFields = adForm.querySelectorAll('input, select');
+  var adFormFields = adForm.querySelectorAll('input, select, textarea');
   var mapFilters = document.querySelector('.map__filters');
   var mapFiltersFields = mapFilters.querySelectorAll('input, select');
   var houseType = document.querySelector('#type');
@@ -84,12 +83,11 @@
   var roomNumber = document.querySelector('#room_number');
   var capacity = document.querySelector('#capacity');
 
-  address.value = MAIN_PIN_START_ADDRESS;
+  address.value = window.util.MAIN_PIN_START_ADDRESS;
   makeDisabled(adFormFields);
   makeDisabled(mapFiltersFields);
 
   window.form = {
-    MAIN_PIN_START_ADDRESS: MAIN_PIN_START_ADDRESS,
     address: address,
     adForm: adForm,
     adFormFields: adFormFields,
@@ -102,6 +100,7 @@
     capacity: capacity,
 
     makeActive: makeActive,
+    makeDisabled: makeDisabled,
     onHouseTypeChange: onHouseTypeChange,
     onInOutTimeChange: onInOutTimeChange,
     onRoomsGuestsChange: onRoomsGuestsChange

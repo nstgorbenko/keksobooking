@@ -13,40 +13,8 @@
    * Возвращает адрес метки - координаты, на которые метка указывает своим острым концом
    * @return {String}
    */
-  var mainPinAddress = function () {
+  var getMainPinAddress = function () {
     return Math.round((mainPin.offsetLeft + MAIN_PIN_WIDTH / 2)) + ', ' + Math.round((mainPin.offsetTop + MAIN_PIN_HEIGHT));
-  };
-
-  /**
-   * Переводит страницу в активное состояние
-   */
-  var onFirstMouseUp = function () {
-    window.form.address.value = mainPinAddress();
-    window.data.map.classList.remove('map--faded');
-    window.form.adForm.classList.remove('ad-form--disabled');
-    window.data.renderAds(window.data.ads);
-    window.form.makeActive(window.form.mapFiltersFields);
-    window.form.makeActive(window.form.adFormFields);
-    window.data.submitButton.disabled = false;
-
-    window.form.mapFilters.addEventListener('change', window.filter.onMapFiltersChange);
-    window.form.houseType.addEventListener('change', window.form.onHouseTypeChange);
-    window.form.timeIn.addEventListener('change', window.form.onInOutTimeChange);
-    window.form.timeOut.addEventListener('change', window.form.onInOutTimeChange);
-    window.form.onRoomsGuestsChange();
-    window.form.capacity.addEventListener('change', window.form.onRoomsGuestsChange);
-    window.form.roomNumber.addEventListener('change', window.form.onRoomsGuestsChange);
-    window.form.adForm.addEventListener('submit', window.data.onFormSubmit);
-
-    document.removeEventListener('mouseup', onFirstMouseUp);
-    mainPin.removeEventListener('mousedown', onFirstMouseDown);
-  };
-
-  /**
-   * Переводит страницу в активное состояние после первого перемещения метки
-   */
-  var onFirstMouseDown = function () {
-    document.addEventListener('mouseup', onFirstMouseUp);
   };
 
   /**
@@ -88,7 +56,7 @@
       mainPin.style.top = mainPinCoords.y + 'px';
       mainPin.style.left = mainPinCoords.x + 'px';
 
-      window.form.address.value = mainPinAddress();
+      window.form.address.value = getMainPinAddress();
     };
 
     /**
@@ -105,11 +73,9 @@
 
   var mainPin = document.querySelector('.map__pin--main');
 
-  window.backend.download(window.data.onSuccessLoad, window.data.onErrorLoad);
-
   window.map = {
     mainPin: mainPin,
-    onFirstMouseDown: onFirstMouseDown,
+    getMainPinAddress: getMainPinAddress,
     onMouseDown: onMouseDown
   };
 })();

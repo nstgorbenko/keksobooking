@@ -19,7 +19,7 @@
    */
   var onFormSubmit = function (evt) {
     evt.preventDefault();
-    window.backend.send(new FormData(window.form.adForm), onSuccessSubmit, onErrorLoad);
+    window.backend.sendAd(new FormData(window.form.adForm), onSuccessSubmit, onErrorLoad);
     submitButton.disabled = true;
   };
 
@@ -108,7 +108,7 @@
   var submitButton = document.querySelector('.ad-form__submit');
 
   submitButton.disabled = true;
-  window.backend.download(onSuccessLoad, onErrorLoad);
+  window.backend.downloadPins(onSuccessLoad, onErrorLoad);
 
   window.feedback = {
     submitButton: submitButton,

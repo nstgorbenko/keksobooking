@@ -12,13 +12,7 @@
    */
   var createPin = function (pinData) {
     var pin = pinTemplate.cloneNode(true);
-
-    pin.style.left = pinData.location.x - PIN_WIDTH / 2 + 'px';
-    pin.style.top = pinData.location.y - PIN_HEIGHT + 'px';
-    pin.querySelector('img').src = pinData.author.avatar;
-    pin.querySelector('img').alt = '';
-
-    pin.addEventListener('click', function () {
+    var onPinClick = function () {
       var activePin = window.adCard.mapPins.querySelector('.map__pin--active');
 
       if (activePin) {
@@ -27,7 +21,13 @@
       pin.classList.add('map__pin--active');
       window.adCard.map.insertBefore(window.adCard.create(pinData), mapFiltersContainer);
       document.addEventListener('keydown', window.adCard.onEscPress);
-    });
+    };
+
+    pin.style.left = pinData.location.x - PIN_WIDTH / 2 + 'px';
+    pin.style.top = pinData.location.y - PIN_HEIGHT + 'px';
+    pin.querySelector('img').src = pinData.author.avatar;
+    pin.querySelector('img').alt = '';
+    pin.addEventListener('click', onPinClick);
 
     return pin;
   };

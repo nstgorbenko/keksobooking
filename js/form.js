@@ -1,12 +1,6 @@
 'use strict';
 (function () {
   var NO_GUESTS_HOUSE = '100';
-  var minPriceMap = {
-    'bungalo': 0,
-    'flat': 1000,
-    'house': 5000,
-    'palace': 10000
-  };
   var RoomGuestsMap = {
     1: [1],
     2: [1, 2],
@@ -38,8 +32,8 @@
    * Устанавливает значение атрибутов min и placeholder для поля 'Цена за ночь, руб' в соответствии с выбранным типом жилья
    */
   var onHouseTypeChange = function () {
-    price.min = minPriceMap[houseType.value];
-    price.placeholder = minPriceMap[houseType.value];
+    price.min = window.util.HouseTypeMap[houseType.value].minPrice;
+    price.placeholder = window.util.HouseTypeMap[houseType.value].minPrice;
   };
 
   /**

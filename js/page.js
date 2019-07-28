@@ -6,32 +6,55 @@
   };
 
   /**
-   * Переводит страницу в активное состояние
+   * Переключает внешний вид страницы с активного на неактивный и наоборот
    */
-  var onFirstMouseUp = function () {
-    window.form.address.value = window.map.getMainPinAddress();
-    window.adCard.map.classList.remove('map--faded');
-    window.form.adForm.classList.remove('ad-form--disabled');
-    window.pin.renderAds(window.feedback.ads);
-    window.form.makeActive(window.form.mapFiltersFields);
-    window.form.makeActive(window.form.adFormFields);
-    window.feedback.submitButton.disabled = false;
-    resetButton.disabled = false;
+  var toggleState = function () {
+    window.adCard.map.classList.toggle('map--faded');
+    window.form.adForm.classList.toggle('ad-form--disabled');
+  };
 
+  /**
+   * Добаляет обработчики событий для активной страницы
+   */
+  var addActivePageListeners = function () {
     window.form.mapFilters.addEventListener('change', window.filter.onChange);
-    window.form.onHouseTypeChange();
     window.form.houseType.addEventListener('change', window.form.onHouseTypeChange);
     window.form.timeIn.addEventListener('change', window.form.onInOutTimeChange);
     window.form.timeOut.addEventListener('change', window.form.onInOutTimeChange);
-    window.form.onRoomsGuestsChange();
     window.form.capacity.addEventListener('change', window.form.onRoomsGuestsChange);
     window.form.roomNumber.addEventListener('change', window.form.onRoomsGuestsChange);
     window.form.adForm.addEventListener('submit', window.feedback.onFormSubmit);
     resetButton.addEventListener('click', onResetButtonClick);
+  };
 
+  /**
+   * Удаляет обработчики событий для неактивной страницы
+   */
+  var removeInactivePageListeners = function () {
     document.removeEventListener('mouseup', onFirstMouseUp);
     window.map.mainPin.removeEventListener('mousedown', onFirstMouseDown);
     window.map.mainPin.removeEventListener('click', onFirstMouseUp);
+  };
+
+  var makeFormActive = function () {
+    window.form.makeActive(window.form.mapFiltersFields);
+    window.form.makeActive(window.form.adFormFields);
+    window.form.onHouseTypeChange();
+    window.form.onRoomsGuestsChange();
+    window.feedback.submitButton.disabled = false;
+    resetButton.disabled = false;
+  };
+
+  /**
+   * Переводит страницу в активное состояние
+   */
+  var onFirstMouseUp = function () {
+    window.form.address.value = window.map.getMainPinAddress();
+    toggleState();
+    window.pin.renderAds(window.feedback.ads);
+    makeFormActive();
+    addActivePageListeners();
+    removeInactivePageListeners();
   };
 
   /**
@@ -42,24 +65,17 @@
   };
 
   /**
-   * Переводит страницу в неактивное состояние
+   * Добаляет обработчики событий для неактивной страницы
    */
-  var makePageInactive = function () {
-    window.pin.clearAds();
-    window.adCard.close();
-    window.form.adForm.reset();
-    window.form.mapFilters.reset();
+  var addInactivePageListeners = function () {
+    window.map.mainPin.addEventListener('mousedown', onFirstMouseDown);
+    window.map.mainPin.addEventListener('click', onFirstMouseUp);
+  };
 
-    window.map.mainPin.style = MainPinStyle.LEFT + '; ' + MainPinStyle.TOP;
-    window.form.address.value = window.util.MAIN_PIN_START_ADDRESS;
-
-    window.adCard.map.classList.add('map--faded');
-    window.form.adForm.classList.add('ad-form--disabled');
-    window.form.makeDisabled(window.form.mapFiltersFields);
-    window.form.makeDisabled(window.form.adFormFields);
-    window.feedback.submitButton.disabled = true;
-    resetButton.disabled = true;
-
+  /**
+   * Удаляет обработчики событий для активной страницы
+   */
+  var removeActivePageListeners = function () {
     window.form.mapFilters.removeEventListener('change', window.filter.onChange);
     window.form.houseType.removeEventListener('change', window.form.onHouseTypeChange);
     window.form.timeIn.removeEventListener('change', window.form.onInOutTimeChange);
@@ -68,9 +84,33 @@
     window.form.roomNumber.removeEventListener('change', window.form.onRoomsGuestsChange);
     window.form.adForm.removeEventListener('submit', window.feedback.onFormSubmit);
     resetButton.removeEventListener('click', onResetButtonClick);
+  };
 
-    window.map.mainPin.addEventListener('mousedown', onFirstMouseDown);
-    window.map.mainPin.addEventListener('click', onFirstMouseUp);
+  var makeFormInactive = function () {
+    window.form.makeDisabled(window.form.mapFiltersFields);
+    window.form.makeDisabled(window.form.adFormFields);
+    window.feedback.submitButton.disabled = true;
+    resetButton.disabled = true;
+  };
+
+  var clearPage = function () {
+    window.adCard.close();
+    window.pin.clearAds();
+    window.form.adForm.reset();
+    window.form.mapFilters.reset();
+  };
+
+  /**
+   * Переводит страницу в неактивное состояние
+   */
+  var makePageInactive = function () {
+    clearPage();
+    window.map.mainPin.style = MainPinStyle.LEFT + '; ' + MainPinStyle.TOP;
+    window.form.address.value = window.util.MAIN_PIN_START_ADDRESS;
+    toggleState();
+    makeFormInactive();
+    removeActivePageListeners();
+    addInactivePageListeners();
   };
 
   /**

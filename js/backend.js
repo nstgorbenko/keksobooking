@@ -80,7 +80,7 @@
   };
 
   window.backend = {
-    download: download,
-    send: send
+    downloadPins: download,
+    sendAd: send
   };
 })();

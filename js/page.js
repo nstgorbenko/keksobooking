@@ -17,6 +17,7 @@
    * Добаляет обработчики событий для активной страницы
    */
   var addActivePageListeners = function () {
+    window.adCard.map.addEventListener('click', window.pin.onClick);
     window.form.mapFilters.addEventListener('change', window.filter.onChange);
     window.form.houseType.addEventListener('change', window.form.onHouseTypeChange);
     window.form.timeIn.addEventListener('change', window.form.onInOutTimeChange);
@@ -80,6 +81,7 @@
    * Удаляет обработчики событий для активной страницы
    */
   var removeActivePageListeners = function () {
+    window.adCard.map.removeEventListener('click', window.pin.onClick);
     window.form.mapFilters.removeEventListener('change', window.filter.onChange);
     window.form.houseType.removeEventListener('change', window.form.onHouseTypeChange);
     window.form.timeIn.removeEventListener('change', window.form.onInOutTimeChange);

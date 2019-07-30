@@ -75,16 +75,8 @@
     if (adCard) {
       map.removeChild(adCard);
       mapPins.querySelector('.map__pin--active').classList.remove('map__pin--active');
-      card.querySelector('.popup__close').removeEventListener('click', onCloseAdCardClick);
       document.removeEventListener('keydown', onAdCardEscPress);
     }
-  };
-
-  /**
-   * Закрывает карточку объявления по клику
-   */
-  var onCloseAdCardClick = function () {
-    closeAdCard();
   };
 
   /**
@@ -112,7 +104,7 @@
     card.querySelector('.popup__description').textContent = ad.offer.description;
     card.querySelector('.popup__avatar').src = ad.author.avatar;
     renderPhotos(ad.offer.photos);
-    card.querySelector('.popup__close').addEventListener('click', onCloseAdCardClick);
+    document.addEventListener('keydown', onAdCardEscPress);
 
     return card;
   };
@@ -129,7 +121,6 @@
     mapPins: mapPins,
 
     create: createAdCard,
-    close: closeAdCard,
-    onEscPress: onAdCardEscPress
+    close: closeAdCard
   };
 })();

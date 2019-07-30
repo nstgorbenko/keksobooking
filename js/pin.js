@@ -6,28 +6,44 @@
   var LAST_AD_NUMBER = 5;
 
   /**
+   * Открывает и закрывает карточку объявления по клику
+   * @param {Object} evt - объект события 'click'
+   */
+  var onPinClick = function (evt) {
+    var target = evt.target;
+    if (evt.target.tagName === 'IMG') {
+      target = evt.target.parentNode;
+    }
+
+    if (target.classList.contains('map__pin') && !target.classList.contains('map__pin--main')) {
+      var activePin = window.adCard.mapPins.querySelector('.map__pin--active');
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+      target.classList.add('map__pin--active');
+
+      var currentPin = window.feedback.ads.filter(function (ad) {
+        return (ad.location.x - PIN_WIDTH / 2 + 'px' === target.style.left) && (ad.location.y - PIN_HEIGHT + 'px' === target.style.top);
+      })[0];
+      window.adCard.map.insertBefore(window.adCard.create(currentPin), mapFiltersContainer);
+
+    } else if (target.classList.contains('popup__close')) {
+      window.adCard.close();
+    }
+  };
+
+  /**
    * Создает DOM-элемент метки на карте на основе объекта с данными
    * @param {Object} pinData - объект, описывающий похожее объявление неподалеку
    * @return {Node}
    */
   var createPin = function (pinData) {
     var pin = pinTemplate.cloneNode(true);
-    var onPinClick = function () {
-      var activePin = window.adCard.mapPins.querySelector('.map__pin--active');
-
-      if (activePin) {
-        activePin.classList.remove('map__pin--active');
-      }
-      pin.classList.add('map__pin--active');
-      window.adCard.map.insertBefore(window.adCard.create(pinData), mapFiltersContainer);
-      document.addEventListener('keydown', window.adCard.onEscPress);
-    };
 
     pin.style.left = pinData.location.x - PIN_WIDTH / 2 + 'px';
     pin.style.top = pinData.location.y - PIN_HEIGHT + 'px';
     pin.querySelector('img').src = pinData.author.avatar;
     pin.querySelector('img').alt = '';
-    pin.addEventListener('click', onPinClick);
 
     return pin;
   };
@@ -70,6 +86,7 @@
 
   window.pin = {
     renderAds: renderAds,
-    clearAds: clearAds
+    clearAds: clearAds,
+    onClick: onPinClick
   };
 })();

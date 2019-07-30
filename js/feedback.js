@@ -19,7 +19,17 @@
    */
   var onFormSubmit = function (evt) {
     evt.preventDefault();
-    window.backend.sendAd(new FormData(window.form.adForm), onSuccessSubmit, onErrorLoad);
+    var formData = new FormData(window.form.adForm);
+
+    if (window.photo.avatarFile) {
+      formData.append('avatar', window.photo.avatarFile);
+    }
+    if (window.photo.imageFiles) {
+      window.photo.imageFiles.forEach(function (image) {
+        formData.append('images', image);
+      });
+    }
+    window.backend.sendAd(formData, onSuccessSubmit, onErrorLoad);
     submitButton.disabled = true;
   };
 

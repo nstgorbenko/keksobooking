@@ -36,11 +36,15 @@
     window.map.mainPin.removeEventListener('click', onFirstMouseUp);
   };
 
+  /**
+   * Активирует формы фильрации и добавления объявления
+   */
   var makeFormActive = function () {
     window.form.makeActive(window.form.mapFiltersFields);
     window.form.makeActive(window.form.adFormFields);
     window.form.onHouseTypeChange();
     window.form.onRoomsGuestsChange();
+    window.photo.addLoading();
     window.feedback.submitButton.disabled = false;
     resetButton.disabled = false;
   };
@@ -86,9 +90,13 @@
     resetButton.removeEventListener('click', onResetButtonClick);
   };
 
+  /**
+   * Дезактивирует формы фильрации и добавления объявления
+   */
   var makeFormInactive = function () {
     window.form.makeDisabled(window.form.mapFiltersFields);
     window.form.makeDisabled(window.form.adFormFields);
+    window.photo.removeLoading();
     window.feedback.submitButton.disabled = true;
     resetButton.disabled = true;
   };
@@ -98,6 +106,7 @@
     window.pin.clearAds();
     window.form.adForm.reset();
     window.form.mapFilters.reset();
+    window.photo.deletePreviews();
   };
 
   /**

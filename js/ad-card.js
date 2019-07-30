@@ -2,23 +2,6 @@
 (function () {
   var ROOM_PLURALS = ['комната', 'комнаты', 'комнат'];
   var GUEST_PLURALS = ['гостя', 'гостей', 'гостей'];
-  var HouseFeatureMap = {
-    'wifi': 'бесплатный WI-FI',
-    'dishwasher': 'посудомоечная машина',
-    'parking': 'парковка',
-    'washer': 'стиральная машина',
-    'elevator': 'лифт',
-    'conditioner': 'кондиционер'
-  };
-
-  /**
-   * Переводит значение удобства на русский язык
-   * @param {String} feature - значение на английском
-   * @return {String} - значение на русском
-   */
-  var getHouseFeature = function (feature) {
-    return HouseFeatureMap[feature];
-  };
 
   /**
    * Возвращает число и единицу измерения с правильным окончанием
@@ -67,6 +50,23 @@
   };
 
   /**
+   * Добавляет список удобств в карточку объявления
+   * @param {Array.<string>} features - массив с перечислением удобств
+   * @return {DocumentFragment} - контейнер для вставки карточек удобств
+   */
+  var addFeatures = function (features) {
+    var featuresFragment = document.createDocumentFragment();
+
+    features.forEach(function (feature) {
+      var newFeature = document.createElement('li');
+      newFeature.classList.add('popup__feature', 'popup__feature--' + feature);
+      featuresFragment.appendChild(newFeature);
+    });
+
+    return featuresFragment;
+  };
+
+  /**
    * Закрывает карточку объявления
    */
   var closeAdCard = function () {
@@ -107,7 +107,8 @@
     card.querySelector('.popup__type').textContent = window.util.HouseTypeMap[ad.offer.type].name;
     card.querySelector('.popup__text--capacity').textContent = getPluralForm(ad.offer.rooms, ROOM_PLURALS) + ' для ' + getPluralForm(ad.offer.guests, GUEST_PLURALS);
     card.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
-    card.querySelector('.popup__features').textContent = ad.offer.features.map(getHouseFeature).join(', ');
+    card.querySelector('.popup__features').innerHTML = '';
+    card.querySelector('.popup__features').appendChild(addFeatures(ad.offer.features));
     card.querySelector('.popup__description').textContent = ad.offer.description;
     card.querySelector('.popup__avatar').src = ad.author.avatar;
     renderPhotos(ad.offer.photos);

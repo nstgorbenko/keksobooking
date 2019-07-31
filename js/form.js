@@ -57,10 +57,8 @@
     });
     var message = '';
 
-    if (isCapacityEnough === false && roomNumber.value === NO_GUESTS_HOUSE) {
-      message = 'Допустимое значение - не для гостей';
-    } else if (isCapacityEnough === false) {
-      message = 'Допустимое количество гостей - не более ' + Math.max.apply(Math, RoomGuestsMap[roomNumber.value]) + ', но больше 0';
+    if (!isCapacityEnough) {
+      message = roomNumber.value === NO_GUESTS_HOUSE ? 'Допустимое значение - не для гостей' : 'Допустимое количество гостей - не более ' + Math.max.apply(Math, RoomGuestsMap[roomNumber.value]) + ', но больше 0';
     }
     capacity.setCustomValidity(message);
   };

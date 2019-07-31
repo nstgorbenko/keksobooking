@@ -28,20 +28,25 @@
     xhr.addEventListener('load', function () {
       var error;
       switch (xhr.status) {
-        case Code.SUCCESS:
+        case Code.SUCCESS: {
           onSuccess(xhr.response);
           break;
-        case Code.BAD_REQUEST:
+        }
+        case Code.BAD_REQUEST: {
           error = 'Неверный запрос';
           break;
-        case Code.NOT_FOUND:
+        }
+        case Code.NOT_FOUND: {
           error = 'Ничего не найдено';
           break;
-        case Code.SERVER_ERROR:
+        }
+        case Code.SERVER_ERROR: {
           error = 'Внутренняя ошибка сервера';
           break;
-        default:
+        }
+        default: {
           error = 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText;
+        }
       }
       if (error) {
         onError(error);

@@ -13,35 +13,8 @@
    * Возвращает адрес метки - координаты, на которые метка указывает своим острым концом
    * @return {String}
    */
-  var mainPinAddress = function () {
+  var getMainPinAddress = function () {
     return Math.round((mainPin.offsetLeft + MAIN_PIN_WIDTH / 2)) + ', ' + Math.round((mainPin.offsetTop + MAIN_PIN_HEIGHT));
-  };
-
-  /**
-   * Переводит страницу в активное состояние
-   */
-  var onFirstMouseUp = function () {
-    window.form.address.value = mainPinAddress();
-    map.classList.remove('map--faded');
-    window.form.adForm.classList.remove('ad-form--disabled');
-    window.data.renderAds(window.data.ads);
-    window.form.makeActive(window.form.mapFiltersFields);
-    window.form.makeActive(window.form.adFormFields);
-
-    window.form.mapFilters.addEventListener('change', window.filter.onMapFiltersChange);
-    window.form.houseType.addEventListener('change', window.form.onHouseTypeChange);
-    window.form.timeIn.addEventListener('change', window.form.onInOutTimeChange);
-    window.form.timeOut.addEventListener('change', window.form.onInOutTimeChange);
-
-    document.removeEventListener('mouseup', onFirstMouseUp);
-    mainPin.removeEventListener('mousedown', onFirstMouseDown);
-  };
-
-  /**
-   * Переводит страницу в активное состояние после первого перемещения метки
-   */
-  var onFirstMouseDown = function () {
-    document.addEventListener('mouseup', onFirstMouseUp);
   };
 
   /**
@@ -83,7 +56,7 @@
       mainPin.style.top = mainPinCoords.y + 'px';
       mainPin.style.left = mainPinCoords.x + 'px';
 
-      window.form.address.value = mainPinAddress();
+      window.form.address.value = getMainPinAddress();
     };
 
     /**
@@ -98,10 +71,11 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
 
-  window.backend.load(window.data.onSuccessLoad, window.data.onErrorLoad);
-  mainPin.addEventListener('mousedown', onFirstMouseDown);
-  mainPin.addEventListener('mousedown', onMouseDown);
+  window.map = {
+    mainPin: mainPin,
+    getMainPinAddress: getMainPinAddress,
+    onMouseDown: onMouseDown
+  };
 })();
